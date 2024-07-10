@@ -1,35 +1,19 @@
 package main
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-	"os"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	log.Print("starting server...")
-	http.HandleFunc("/", handler)
-	http.HandleFunc("/users/new", createUser);
+	r := gin.Default()
 
-	// Determine port for HTTP service.
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "3000"
-		log.Printf("defaulting to port %s", port)
-	}
+	r.GET("/", func(ctx *gin.Context) {
+		ctx.JSON(http.StatusOK, gin.H{"msg": "Helloo"})
+	})
 
-	// Start HTTP server.
-	log.Printf("listening on port %s", port)
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal(err)
-	}
-}
+	r.POST("/users/new", CreateUser)
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	name := os.Getenv("NAME")
-	if name == "" {
-		name = "World"
-	}
-	fmt.Fprintf(w, "Hello %s!\n", name)
+	r.Run(":8080");
 }
